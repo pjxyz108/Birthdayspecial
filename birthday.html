@@ -1,0 +1,872 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy 21st Birthday Jaan! 💖✨</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Canvas Confetti Library -->
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <!-- FontAwesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@600;700&family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brandPink: '#ff4b82',
+                        brandGold: '#ffd700',
+                        brandPurple: '#7c3aed',
+                        brandDarkPink: '#db2777',
+                    },
+                    fontFamily: {
+                        sans: ['Poppins', 'sans-serif'],
+                        handwriting: ['Caveat', 'cursive'],
+                    },
+                    animation: {
+                        'float': 'float 4s ease-in-out infinite',
+                        'pulse-glow': 'pulseGlow 2s ease-in-out infinite',
+                        'spin-slow': 'spin 12s linear infinite',
+                    },
+                    keyframes: {
+                        float: {
+                            '0%, 100%': { transform: 'translateY(0px) rotate(0deg)' },
+                            '50%': { transform: 'translateY(-15px) rotate(3deg)' },
+                        },
+                        pulseGlow: {
+                            '0%, 100%': { filter: 'drop-shadow(0 0 15px rgba(255, 75, 130, 0.6))' },
+                            '50%': { filter: 'drop-shadow(0 0 30px rgba(255, 215, 0, 0.9))' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* Custom Styles for Glassmorphism and Background FX */
+        body {
+            background: linear-gradient(135deg, #1a052b 0%, #3a0d45 35%, #5c1349 70%, #210833 100%);
+            min-height: 100vh;
+            color: #ffffff;
+            overflow-x: hidden;
+            user-select: none;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.22);
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.4);
+        }
+
+        .glass-card-gold {
+            background: rgba(255, 215, 0, 0.08);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 215, 0, 0.3);
+            box-shadow: 0 0 30px rgba(255, 215, 0, 0.2);
+        }
+
+        /* Floating background hearts container */
+        .hearts-bg {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .floating-heart {
+            position: absolute;
+            color: rgba(255, 105, 180, 0.35);
+            font-size: 1.5rem;
+            animation: moveUp 10s linear infinite;
+            bottom: -50px;
+        }
+
+        @keyframes moveUp {
+            0% { transform: translateY(0) scale(0.8) rotate(0deg); opacity: 0; }
+            20% { opacity: 0.8; }
+            100% { transform: translateY(-110vh) scale(1.3) rotate(360deg); opacity: 0; }
+        }
+
+        /* Page transition effects */
+        .page-step {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px) scale(0.98);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+        }
+
+        .page-step.active {
+            display: flex;
+            opacity: 1;
+            transform: translateY(0) scale(1);
+        }
+
+        /* Gradient Text */
+        .gradient-text {
+            background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fec107 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .gradient-text-gold {
+            background: linear-gradient(135deg, #ffe066 0%, #f59e0b 50%, #fbbf24 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        /* Custom Scrollbar for long pages */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 75, 130, 0.5);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+<body class="font-sans antialiased min-h-screen flex flex-col justify-between relative overflow-x-hidden">
+
+    <!-- Floating Background Hearts -->
+    <div class="hearts-bg" id="heartsBg"></div>
+
+    <!-- Music Control Header -->
+    <header class="fixed top-4 right-4 z-50 flex items-center gap-3">
+        <button id="musicToggle" class="glass-card px-4 py-2.5 rounded-full flex items-center gap-2 text-sm font-semibold hover:bg-white/20 transition-all border border-pink-400/40 shadow-lg text-pink-200 hover:text-white">
+            <i id="musicIcon" class="fa-solid fa-compact-disc animate-spin-slow text-lg text-yellow-300"></i>
+            <span id="musicText">Flute Audio: OFF</span>
+        </button>
+    </header>
+
+    <!-- Main Container -->
+    <main class="flex-grow flex items-center justify-center p-4 sm:p-6 my-auto z-10 w-full max-w-4xl mx-auto">
+
+        <!-- ================= PAGE 1: LANDING PAGE ================= -->
+        <section id="page1" class="page-step active flex-col items-center justify-center text-center w-full py-8">
+            <div class="glass-card p-8 sm:p-12 rounded-3xl w-full max-w-2xl relative overflow-hidden border border-pink-500/30">
+                <!-- Decorative Top Elements -->
+                <div class="text-5xl sm:text-6xl mb-6 animate-bounce">👑✨</div>
+                
+                <h1 class="text-3xl sm:text-5xl font-extrabold mb-4 gradient-text leading-tight">
+                    Look who is here... <br>the birthday boy? 🥳✨
+                </h1>
+                
+                <p class="text-lg sm:text-2xl text-pink-100 font-handwriting mb-8 text-pink-200">
+                    Would the birthday boy like to see his jaan's online gift? 🎁💖
+                </p>
+
+                <!-- Interactive Choice Buttons -->
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-5 relative min-h-[120px]" id="landingButtonsContainer">
+                    <button onclick="handleYesClick()" class="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-pink-500 via-rose-500 to-yellow-500 text-white font-bold text-xl rounded-2xl shadow-xl hover:scale-105 active:scale-95 transition-all duration-300 flex items-center justify-center gap-3 border border-yellow-300/40">
+                        <i class="fa-solid fa-gift text-2xl animate-bounce"></i>
+                        <span>YES! 🎁✨</span>
+                    </button>
+
+                    <button id="noBtn" onmouseenter="dodgeNoButton()" onclick="dodgeNoButton()" class="w-full sm:w-auto px-8 py-4 bg-white/10 hover:bg-white/20 text-pink-200 font-semibold text-lg rounded-2xl border border-white/20 transition-all duration-200">
+                        <span>NO 😜</span>
+                    </button>
+                </div>
+
+                <p id="dodgeMessage" class="mt-4 text-xs sm:text-sm text-yellow-300 font-medium h-5 opacity-0 transition-opacity">
+                    Nice try! You have to say YES! 💖😜
+                </p>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 2: HAPPY BIRTHDAY MESSAGE ================= -->
+        <section id="page2" class="page-step flex-col items-center justify-center text-center w-full py-8">
+            <div class="glass-card p-6 sm:p-10 rounded-3xl w-full max-w-2xl border border-pink-400/40 relative">
+                <div class="text-4xl sm:text-5xl mb-3">🎂🎉🎈</div>
+                
+                <h2 class="text-2xl sm:text-4xl font-extrabold mb-6 gradient-text">
+                    Happy 21st Birthday, Jaan! 🎉🎂💕✨
+                </h2>
+
+                <div class="bg-black/20 p-6 sm:p-8 rounded-2xl border border-pink-500/20 text-left mb-8 shadow-inner">
+                    <p class="text-base sm:text-lg leading-relaxed text-pink-100 font-sans tracking-wide">
+                        U know it's been 3 years, but it felt like someone who understood me since the beginning—knowing when I'm sad, hurt, lying, and still comforting me in my period mood swings... when u have your own problems baby, I didn't deserve this still u gave me... thank you 💕💕💖💗💓🥰🥰❤️‍🔥
+                    </p>
+                </div>
+
+                <div class="flex justify-end">
+                    <button onclick="goToPage(3)" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold text-lg rounded-xl shadow-lg transition-all flex items-center justify-center gap-2">
+                        <span>Next: My Appreciation For You 💕</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 3: APPRECIATION PAGE ================= -->
+        <section id="page3" class="page-step flex-col items-center justify-center text-center w-full py-8">
+            <div class="glass-card p-6 sm:p-10 rounded-3xl w-full max-w-3xl border border-amber-300/30">
+                <div class="text-4xl mb-2">🎓🧪➗💖</div>
+                
+                <h2 class="text-2xl sm:text-4xl font-extrabold mb-6 gradient-text-gold">
+                    How Much I Appreciate You 💖🥰✨
+                </h2>
+
+                <p class="text-sm sm:text-base text-pink-200 mb-8 max-w-xl mx-auto">
+                    You aren't just my favorite person; you're my genius math teacher, my late-night study partner, and my constant safe space.
+                </p>
+
+                <!-- Cards Grid -->
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-left mb-8">
+                    <div class="p-5 rounded-2xl bg-white/5 border border-pink-400/20 hover:border-pink-400/50 transition-all hover:bg-white/10">
+                        <div class="text-2xl mb-2">🧮 🧪</div>
+                        <h3 class="font-bold text-yellow-300 text-lg mb-1">Math & Chem Wizard</h3>
+                        <p class="text-xs sm:text-sm text-pink-100">For always patiently teaching me complex math & chemistry sums whenever I'm stuck, explaining every detail with care.</p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-white/5 border border-pink-400/20 hover:border-pink-400/50 transition-all hover:bg-white/10">
+                        <div class="text-2xl mb-2">😜 🧠</div>
+                        <h3 class="font-bold text-yellow-300 text-lg mb-1">Teasing & Learning</h3>
+                        <p class="text-xs sm:text-sm text-pink-100">For your endless curiosity, always keen on learning new things, and your playful teasing that never fails to make me smile!</p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-white/5 border border-pink-400/20 hover:border-pink-400/50 transition-all hover:bg-white/10">
+                        <div class="text-2xl mb-2">🛡️ 🫂</div>
+                        <h3 class="font-bold text-yellow-300 text-lg mb-1">Unconditional Care</h3>
+                        <p class="text-xs sm:text-sm text-pink-100">Even when you carry your own heavy burdens and problems, you still put me first and wrap me in infinite love and comfort.</p>
+                    </div>
+
+                    <div class="p-5 rounded-2xl bg-white/5 border border-pink-400/20 hover:border-pink-400/50 transition-all hover:bg-white/10">
+                        <div class="text-2xl mb-2">✨ 👑</div>
+                        <h3 class="font-bold text-yellow-300 text-lg mb-1">My Greatest Gift</h3>
+                        <p class="text-xs sm:text-sm text-pink-100">Thank you for being my rock, my teacher, my best friend, and my soulmate. I appreciate every single thing you do.</p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center gap-4">
+                    <button onclick="goToPage(2)" class="px-5 py-3 bg-white/10 hover:bg-white/20 text-pink-200 text-sm font-semibold rounded-xl transition-all">
+                        <i class="fa-solid fa-arrow-left mr-2"></i>Back
+                    </button>
+                    <button onclick="goToPage(4)" class="px-7 py-3 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-bold text-base rounded-xl shadow-lg transition-all flex items-center gap-2">
+                        <span>Our Unforgettable Dates 📅❤️</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 4: UNFORGETTABLE DATES TIMELINE ================= -->
+        <section id="page4" class="page-step flex-col items-center justify-center text-center w-full py-6">
+            <div class="glass-card p-6 sm:p-8 rounded-3xl w-full max-w-3xl border border-pink-400/30">
+                <div class="text-3xl sm:text-4xl mb-2">📅💖✨</div>
+                
+                <h2 class="text-2xl sm:text-3xl font-extrabold mb-2 gradient-text">
+                    Our Unforgettable Timeline
+                </h2>
+                <p class="text-xs sm:text-sm text-pink-200 mb-6 font-handwriting text-xl">
+                    Every date carries a piece of my heart...
+                </p>
+
+                <!-- Timeline Container -->
+                <div class="space-y-3.5 text-left max-h-[50vh] overflow-y-auto pr-2 mb-6" id="timelineList">
+                    
+                    <!-- 14 Dec 2023 -->
+                    <div class="p-4 rounded-xl bg-white/10 border-l-4 border-pink-500 backdrop-blur-sm">
+                        <span class="text-yellow-300 font-extrabold text-base sm:text-lg">14 Dec 2023</span>
+                        <p class="text-xs sm:text-sm text-pink-100 mt-1">The first time we talked in messages 💬💕</p>
+                    </div>
+
+                    <!-- 28 Jan 2024 -->
+                    <div class="p-4 rounded-xl bg-white/10 border-l-4 border-yellow-400 backdrop-blur-sm">
+                        <span class="text-yellow-300 font-extrabold text-base sm:text-lg">28 Jan 2024</span>
+                        <p class="text-xs sm:text-sm text-pink-100 mt-1">When jaan called me on terrace and had fast and we talked and confessed 🌙✨</p>
+                    </div>
+
+                    <!-- 27 Feb 2024 -->
+                    <div class="p-4 rounded-xl bg-white/10 border-l-4 border-pink-400 backdrop-blur-sm">
+                        <span class="text-yellow-300 font-extrabold text-base sm:text-lg">27 Feb 2024</span>
+                        <p class="text-xs sm:text-sm text-pink-100 mt-1">First hug and knuckles kiss on the last day of tuition with plenty of sweet memories 🫂💋</p>
+                    </div>
+
+                    <!-- 26 Apr 2024 -->
+                    <div class="p-4 rounded-xl bg-white/10 border-l-4 border-purple-400 backdrop-blur-sm">
+                        <span class="text-yellow-300 font-extrabold text-base sm:text-lg">26 Apr 2024</span>
+                        <p class="text-xs sm:text-sm text-pink-100 mt-1">First time we met in a party and someone asked me: <br><em>"Is brother's sister mad from long back or did she become now??"</em> 😂🎉</p>
+                    </div>
+
+                    <!-- 13 May 2024 -->
+                    <div class="p-4 rounded-xl bg-white/10 border-l-4 border-rose-500 backdrop-blur-sm">
+                        <span class="text-yellow-300 font-extrabold text-base sm:text-lg">13 May 2024</span>
+                        <p class="text-xs sm:text-sm text-pink-100 mt-1">When jaan gave me the long paragraph which almost gave me anxiety feeling! 📜💗</p>
+                    </div>
+
+                    <!-- 18 May 2024 -->
+                    <div class="p-4 rounded-xl bg-white/10 border-l-4 border-red-400 backdrop-blur-sm">
+                        <span class="text-yellow-300 font-extrabold text-base sm:text-lg">18 May 2024</span>
+                        <p class="text-xs sm:text-sm text-pink-100 mt-1">Kiss on RIGHT CHEEK without permission! 😘 blushing so hard!</p>
+                    </div>
+
+                    <!-- 27 Aug 2024 -->
+                    <div class="p-4 rounded-xl bg-white/10 border-l-4 border-yellow-300 backdrop-blur-sm">
+                        <span class="text-yellow-300 font-extrabold text-base sm:text-lg">27 Aug 2024</span>
+                        <p class="text-xs sm:text-sm text-pink-100 mt-1">Someone asked me to be his RADHA 🌸🪈✨</p>
+                    </div>
+
+                    <!-- 1st Sep 2024 -->
+                    <div class="p-4 rounded-xl bg-white/10 border-l-4 border-purple-500 backdrop-blur-sm">
+                        <span class="text-yellow-300 font-extrabold text-base sm:text-lg">1st Sep 2024</span>
+                        <p class="text-xs sm:text-sm text-pink-100 mt-1">Because it caused misunderstanding, I felt someone was so valuable to me... still those memories are counting.</p>
+                    </div>
+
+                    <!-- Heartfelt Closing Note -->
+                    <div class="p-5 rounded-2xl bg-gradient-to-r from-pink-900/40 to-purple-900/40 border border-yellow-400/40 text-center mt-4">
+                        <p class="text-sm sm:text-base text-yellow-200 font-medium italic leading-relaxed">
+                            "I don't know whether we have a future or not, but the years we spent and we will spend (if Krishna Ji allows) shall bring endless happiness to your life, my Jaan. ❤️🌸"
+                        </p>
+                    </div>
+                </div>
+
+                <div class="flex justify-between items-center gap-4">
+                    <button onclick="goToPage(3)" class="px-5 py-3 bg-white/10 hover:bg-white/20 text-pink-200 text-sm font-semibold rounded-xl transition-all">
+                        <i class="fa-solid fa-arrow-left mr-2"></i>Back
+                    </button>
+                    <button onclick="goToPage(5)" class="px-7 py-3 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-bold text-base rounded-xl shadow-lg transition-all flex items-center gap-2">
+                        <span>A Special Memory 🎨</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 5: ANIMATED SCENE ================= -->
+        <section id="page5" class="page-step flex-col items-center justify-center text-center w-full py-6">
+            <div class="glass-card p-6 sm:p-8 rounded-3xl w-full max-w-2xl border border-pink-400/30 flex flex-col items-center">
+                <h2 class="text-2xl sm:text-3xl font-extrabold mb-2 gradient-text">
+                    A Precious Moment 🕊️💋
+                </h2>
+                
+                <!-- Canvas Animation Area -->
+                <div class="relative w-full max-w-md my-4 bg-black/30 rounded-2xl overflow-hidden border border-pink-300/30 p-2 shadow-inner">
+                    <canvas id="animationCanvas" width="400" height="280" class="w-full h-auto rounded-xl"></canvas>
+                </div>
+
+                <p class="text-base sm:text-xl text-yellow-200 font-handwriting mb-6">
+                    "Some memories can never be forgotten... 🕊️💖✨"
+                </p>
+
+                <div class="flex justify-between items-center w-full gap-4">
+                    <button onclick="goToPage(4)" class="px-5 py-3 bg-white/10 hover:bg-white/20 text-pink-200 text-sm font-semibold rounded-xl transition-all">
+                        <i class="fa-solid fa-arrow-left mr-2"></i>Back
+                    </button>
+                    <button onclick="goToPage(6)" class="px-7 py-3 bg-gradient-to-r from-pink-500 to-purple-600 hover:from-pink-600 hover:to-purple-700 text-white font-bold text-base rounded-xl shadow-lg transition-all flex items-center gap-2">
+                        <span>Birthday Quiz Time! 🧩</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 6: INTERACTIVE LOVE QUIZ ================= -->
+        <section id="page6" class="page-step flex-col items-center justify-center text-center w-full py-6">
+            <div class="glass-card p-6 sm:p-10 rounded-3xl w-full max-w-2xl border border-pink-400/30">
+                <div class="text-3xl mb-2">🧩🎯💬</div>
+                
+                <h2 class="text-2xl sm:text-3xl font-extrabold mb-1 gradient-text">
+                    Let's see how much u score! 🎯
+                </h2>
+                <p class="text-xs sm:text-sm text-pink-200 mb-6">Test your memory on our sweet beginnings! 💕</p>
+
+                <!-- Quiz Questions -->
+                <div class="space-y-6 text-left mb-8">
+                    
+                    <!-- Question 1 -->
+                    <div class="bg-white/5 p-5 rounded-2xl border border-pink-400/20">
+                        <p class="font-bold text-yellow-300 text-sm sm:text-base mb-3">
+                            1. What was the first song u sent me? 🎵
+                        </p>
+                        <div class="grid grid-cols-2 gap-2.5" id="q1Options">
+                            <button onclick="answerQ1('Faasle', this)" class="q1-btn p-3 text-xs sm:text-sm rounded-xl bg-white/10 hover:bg-pink-500/30 border border-white/20 font-medium transition-all text-left">
+                                A. Faasle
+                            </button>
+                            <button onclick="answerQ1('Radha gori gori', this)" class="q1-btn p-3 text-xs sm:text-sm rounded-xl bg-white/10 hover:bg-pink-500/30 border border-white/20 font-medium transition-all text-left">
+                                B. Radha gori gori
+                            </button>
+                            <button onclick="answerQ1('Goodbye', this)" class="q1-btn p-3 text-xs sm:text-sm rounded-xl bg-white/10 hover:bg-pink-500/30 border border-white/20 font-medium transition-all text-left">
+                                C. Goodbye
+                            </button>
+                            <button onclick="answerQ1('Ishq', this)" class="q1-btn p-3 text-xs sm:text-sm rounded-xl bg-white/10 hover:bg-pink-500/30 border border-white/20 font-medium transition-all text-left">
+                                D. Ishq
+                            </button>
+                        </div>
+                        <p id="q1Feedback" class="mt-3 text-xs sm:text-sm font-semibold h-5"></p>
+                    </div>
+
+                    <!-- Question 2 -->
+                    <div class="bg-white/5 p-5 rounded-2xl border border-pink-400/20">
+                        <p class="font-bold text-yellow-300 text-sm sm:text-base mb-3">
+                            2. When was the first time we called and talked? 📞
+                        </p>
+                        <div class="grid grid-cols-2 gap-2.5" id="q2Options">
+                            <button onclick="answerQ2('27 july', this)" class="q2-btn p-3 text-xs sm:text-sm rounded-xl bg-white/10 hover:bg-pink-500/30 border border-white/20 font-medium transition-all text-left">
+                                A. 27 July
+                            </button>
+                            <button onclick="answerQ2('27 aug', this)" class="q2-btn p-3 text-xs sm:text-sm rounded-xl bg-white/10 hover:bg-pink-500/30 border border-white/20 font-medium transition-all text-left">
+                                B. 27 Aug
+                            </button>
+                            <button onclick="answerQ2('28 jan', this)" class="q2-btn p-3 text-xs sm:text-sm rounded-xl bg-white/10 hover:bg-pink-500/30 border border-white/20 font-medium transition-all text-left">
+                                C. 28 Jan
+                            </button>
+                            <button onclick="answerQ2('other', this)" class="q2-btn p-3 text-xs sm:text-sm rounded-xl bg-white/10 hover:bg-pink-500/30 border border-white/20 font-medium transition-all text-left">
+                                D. Other
+                            </button>
+                        </div>
+                        <p id="q2Feedback" class="mt-3 text-xs sm:text-sm font-semibold h-5"></p>
+                    </div>
+
+                </div>
+
+                <div class="flex justify-between items-center gap-4">
+                    <button onclick="goToPage(5)" class="px-5 py-3 bg-white/10 hover:bg-white/20 text-pink-200 text-sm font-semibold rounded-xl transition-all">
+                        <i class="fa-solid fa-arrow-left mr-2"></i>Back
+                    </button>
+                    <button onclick="goToPage(7)" class="px-7 py-3 bg-gradient-to-r from-pink-500 to-rose-600 hover:from-pink-600 hover:to-rose-700 text-white font-bold text-base rounded-xl shadow-lg transition-all flex items-center gap-2">
+                        <span>Krishna Ji's Blessing ✨🪈</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- ================= PAGE 7: DIVINE BLESSINGS & FINAL PAGE ================= -->
+        <section id="page7" class="page-step flex-col items-center justify-center text-center w-full py-8">
+            <div class="glass-card-gold p-6 sm:p-12 rounded-3xl w-full max-w-2xl border border-yellow-400/50 relative overflow-hidden">
+                <!-- SVG Peacock Feather Decorative Header -->
+                <div class="flex justify-center mb-4">
+                    <svg class="w-16 h-16 text-yellow-400 animate-pulse-glow" viewBox="0 0 100 100" fill="none">
+                        <path d="M50 10 C30 30 10 60 50 90 C90 60 70 30 50 10 Z" fill="url(#featherGrad)" stroke="#ffd700" stroke-width="2"/>
+                        <circle cx="50" cy="45" r="15" fill="#00b4d8"/>
+                        <circle cx="50" cy="45" r="8" fill="#7209b7"/>
+                        <circle cx="50" cy="45" r="4" fill="#ffd700"/>
+                        <defs>
+                            <linearGradient id="featherGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" stop-color="#2a9d8f"/>
+                                <stop offset="50%" stop-color="#e9c46a"/>
+                                <stop offset="100%" stop-color="#f4a261"/>
+                            </linearGradient>
+                        </defs>
+                    </svg>
+                </div>
+
+                <h2 class="text-3xl sm:text-5xl font-extrabold mb-4 gradient-text-gold">
+                    Divine Blessings 🌸🪈✨
+                </h2>
+
+                <div class="bg-black/30 p-6 sm:p-8 rounded-2xl border border-yellow-500/30 text-center mb-8 shadow-2xl">
+                    <p class="text-base sm:text-xl text-yellow-100 font-sans leading-relaxed tracking-wide mb-4">
+                        "May Krishna Ji and Radha Ji bless you with immense happiness, wisdom, strength, and prosperity."
+                    </p>
+                    <p class="text-sm sm:text-lg text-pink-200 font-handwriting text-2xl">
+                        May God give you all the strength in the world. You are so deeply valued, respected, and cherished, my Jaan! 💖✨🌸
+                    </p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row items-center justify-center gap-4">
+                    <button onclick="triggerMassiveConfetti()" class="w-full sm:w-auto px-8 py-3.5 bg-gradient-to-r from-yellow-400 via-amber-500 to-pink-500 text-black font-extrabold text-lg rounded-xl shadow-xl hover:scale-105 active:scale-95 transition-all">
+                        Celebrate with Confetti & Hearts! 🎉💖
+                    </button>
+                    <button onclick="goToPage(1)" class="w-full sm:w-auto px-6 py-3.5 bg-white/10 hover:bg-white/20 text-pink-200 text-base font-semibold rounded-xl border border-white/20 transition-all">
+                        Replay Surprise 🔄
+                    </button>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="text-center py-4 text-xs text-pink-300/60 z-10">
+        Created with endless love for Jaan's 21st Birthday 💕✨
+    </footer>
+
+    <!-- ================= JAVASCRIPT CODE ================= -->
+    <script>
+        /* ----------------------------------------------------
+         * 1. PAGE NAVIGATION & CONFETTI LOGIC
+         * ---------------------------------------------------- */
+        let currentPage = 1;
+
+        function goToPage(pageNum) {
+            // Hide current active page
+            const currentEl = document.getElementById(`page${currentPage}`);
+            if (currentEl) {
+                currentEl.classList.remove('active');
+            }
+
+            // Show new page
+            currentPage = pageNum;
+            const newEl = document.getElementById(`page${currentPage}`);
+            if (newEl) {
+                newEl.classList.add('active');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+
+            // Trigger canvas animation if page 5
+            if (pageNum === 5) {
+                startCanvasAnimation();
+            }
+
+            // Trigger synth melody automatically on Page 7
+            if (pageNum === 7 && !isMusicPlaying) {
+                toggleMusic();
+            }
+        }
+
+        // Handle YES button click on Landing Page
+        function handleYesClick() {
+            // Launch confetti
+            confetti({
+                particleCount: 120,
+                spread: 80,
+                origin: { y: 0.6 },
+                colors: ['#ff4b82', '#ffd700', '#ffffff', '#ff85a1']
+            });
+
+            // Heart bursts
+            setTimeout(() => {
+                confetti({
+                    particleCount: 50,
+                    angle: 60,
+                    spread: 55,
+                    origin: { x: 0 },
+                    colors: ['#ff1493', '#ff69b4', '#ffd700']
+                });
+                confetti({
+                    particleCount: 50,
+                    angle: 120,
+                    spread: 55,
+                    origin: { x: 1 },
+                    colors: ['#ff1493', '#ff69b4', '#ffd700']
+                });
+            }, 250);
+
+            // Go to Page 2
+            setTimeout(() => {
+                goToPage(2);
+            }, 1000);
+        }
+
+        // Playful dodging "NO" button logic
+        let dodgeCount = 0;
+        function dodgeNoButton() {
+            const noBtn = document.getElementById('noBtn');
+            const msg = document.getElementById('dodgeMessage');
+
+            // Show message
+            msg.style.opacity = '1';
+
+            // Random translation offsets
+            const x = (Math.random() - 0.5) * 220;
+            const y = (Math.random() - 0.5) * 120;
+
+            noBtn.style.transform = `translate(${x}px, ${y}px)`;
+            dodgeCount++;
+
+            if (dodgeCount > 3) {
+                msg.innerText = "Haha! There's no escaping! Click YES! 🎁💖";
+            }
+        }
+
+        // Celebration Confetti for final page
+        function triggerMassiveConfetti() {
+            const duration = 3 * 1000;
+            const animationEnd = Date.now() + duration;
+            const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 0 };
+
+            function randomInRange(min, max) {
+                return Math.random() * (max - min) + min;
+            }
+
+            const interval = setInterval(function() {
+                const timeLeft = animationEnd - Date.now();
+
+                if (timeLeft <= 0) {
+                    return clearInterval(interval);
+                }
+
+                const particleCount = 50 * (timeLeft / duration);
+                confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 } });
+                confetti({ ...defaults, particleCount, origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 } });
+            }, 250);
+        }
+
+        /* ----------------------------------------------------
+         * 2. FLOATING BACKGROUND HEARTS GENERATOR
+         * ---------------------------------------------------- */
+        function createFloatingHearts() {
+            const container = document.getElementById('heartsBg');
+            const heartIcons = ['❤️', '💖', '✨', '🌸', '💓', '💗'];
+
+            for (let i = 0; i < 20; i++) {
+                const heart = document.createElement('div');
+                heart.className = 'floating-heart';
+                heart.innerText = heartIcons[Math.floor(Math.random() * heartIcons.length)];
+                heart.style.left = `${Math.random() * 100}%`;
+                heart.style.animationDuration = `${6 + Math.random() * 8}s`;
+                heart.style.animationDelay = `${Math.random() * 5}s`;
+                heart.style.fontSize = `${1 + Math.random() * 1.5}rem`;
+                container.appendChild(heart);
+            }
+        }
+
+        /* ----------------------------------------------------
+         * 3. QUIZ INTERACTION LOGIC
+         * ---------------------------------------------------- */
+        function answerQ1(ans, btn) {
+            const buttons = document.querySelectorAll('.q1-btn');
+            buttons.forEach(b => {
+                b.classList.remove('bg-green-500/40', 'bg-red-500/40', 'border-green-400', 'border-red-400');
+                b.disabled = true;
+            });
+
+            const feedback = document.getElementById('q1Feedback');
+            if (ans === 'Faasle') {
+                btn.classList.add('bg-green-500/40', 'border-green-400');
+                feedback.innerText = "🎉 Happy Emoji! You remembered! 🥰💖 Correct answer: Faasle!";
+                feedback.className = "mt-3 text-xs sm:text-sm font-semibold text-green-300";
+            } else {
+                btn.classList.add('bg-red-500/40', 'border-red-400');
+                feedback.innerText = "Aww, still my baby! 😜 Correct answer was Faasle 💕";
+                feedback.className = "mt-3 text-xs sm:text-sm font-semibold text-yellow-300";
+            }
+        }
+
+        function answerQ2(ans, btn) {
+            const buttons = document.querySelectorAll('.q2-btn');
+            buttons.forEach(b => {
+                b.classList.remove('bg-green-500/40', 'bg-red-500/40', 'border-green-400', 'border-red-400');
+                b.disabled = true;
+            });
+
+            const feedback = document.getElementById('q2Feedback');
+            if (ans === '27 july') {
+                btn.classList.add('bg-green-500/40', 'border-green-400');
+                feedback.innerText = "🎉 Yay! 27 July! You know us so well ❤️";
+                feedback.className = "mt-3 text-xs sm:text-sm font-semibold text-green-300";
+            } else {
+                btn.classList.add('bg-red-500/40', 'border-red-400');
+                feedback.innerText = "Aww, still my baby! It was 27 July! 📞💖";
+                feedback.className = "mt-3 text-xs sm:text-sm font-semibold text-yellow-300";
+            }
+        }
+
+        /* ----------------------------------------------------
+         * 4. CANVAS ANIMATION (Cheek Kiss & Bird Scene)
+         * ---------------------------------------------------- */
+        let animationFrameId = null;
+
+        function startCanvasAnimation() {
+            const canvas = document.getElementById('animationCanvas');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            let frame = 0;
+
+            function draw() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+                // Sky Background Gradient
+                const bgGrad = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                bgGrad.addColorStop(0, '#1e112a');
+                bgGrad.addColorStop(1, '#4a154b');
+                ctx.fillStyle = bgGrad;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+                // Stars / Sparkles
+                ctx.fillStyle = "rgba(255, 255, 255, 0.7)";
+                for (let i = 0; i < 15; i++) {
+                    const x = (i * 37 + frame) % canvas.width;
+                    const y = (i * 19) % (canvas.height - 80);
+                    ctx.beginPath();
+                    ctx.arc(x, y, 1.2, 0, Math.PI * 2);
+                    ctx.fill();
+                }
+
+                // Animated Flying Bird
+                const birdX = (frame * 2) % (canvas.width + 60) - 30;
+                const birdY = 50 + Math.sin(frame * 0.05) * 15;
+                
+                ctx.strokeStyle = '#ffd700';
+                ctx.lineWidth = 2.5;
+                ctx.beginPath();
+                ctx.moveTo(birdX - 10, birdY + Math.sin(frame * 0.2) * 5);
+                ctx.quadraticCurveTo(birdX - 5, birdY - 8, birdX, birdY);
+                ctx.quadraticCurveTo(birdX + 5, birdY - 8, birdX + 10, birdY + Math.sin(frame * 0.2) * 5);
+                ctx.stroke();
+
+                // Boy & Girl Characters Base Positions
+                const boyX = 180;
+                const girlX = 220;
+                const bodyY = 200;
+
+                // Boy Body & Head
+                ctx.fillStyle = '#3b82f6'; // Blue shirt
+                ctx.beginPath();
+                ctx.arc(boyX - 10, bodyY + 30, 22, 0, Math.PI, true);
+                ctx.fill();
+
+                // Boy Head
+                ctx.fillStyle = '#ffdfc4'; // Skin tone
+                ctx.beginPath();
+                ctx.arc(boyX, bodyY, 20, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Boy Hair
+                ctx.fillStyle = '#331800';
+                ctx.beginPath();
+                ctx.arc(boyX - 2, bodyY - 5, 21, Math.PI, Math.PI * 2);
+                ctx.fill();
+
+                // Boy Pointing Arm to Sky Bird
+                ctx.strokeStyle = '#ffdfc4';
+                ctx.lineWidth = 5;
+                ctx.beginPath();
+                ctx.moveTo(boyX - 5, bodyY + 15);
+                ctx.lineTo(birdX > boyX ? boyX + 25 : boyX - 25, birdY + 30);
+                ctx.stroke();
+
+                // Girl Body & Head
+                ctx.fillStyle = '#ec4899'; // Pink dress
+                ctx.beginPath();
+                ctx.arc(girlX + 10, bodyY + 30, 22, 0, Math.PI, true);
+                ctx.fill();
+
+                // Girl Head
+                ctx.fillStyle = '#ffdfc4';
+                ctx.beginPath();
+                ctx.arc(girlX, bodyY, 19, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Girl Long Hair
+                ctx.fillStyle = '#1a0d00';
+                ctx.beginPath();
+                ctx.arc(girlX + 2, bodyY + 2, 22, Math.PI * 0.8, Math.PI * 2.2);
+                ctx.fill();
+
+                // Kiss offset motion
+                const kissOffset = Math.sin(frame * 0.08) * 4;
+                
+                // Girl Blush on cheeks!
+                ctx.fillStyle = 'rgba(255, 75, 130, 0.65)';
+                ctx.beginPath();
+                ctx.arc(girlX - 5, bodyY + 4, 5, 0, Math.PI * 2);
+                ctx.arc(girlX + 8, bodyY + 4, 5, 0, Math.PI * 2);
+                ctx.fill();
+
+                // Hearts Floating above them
+                const heartY = bodyY - 40 - ((frame * 1.5) % 50);
+                const heartOpacity = 1 - (((frame * 1.5) % 50) / 50);
+                
+                ctx.fillStyle = `rgba(255, 105, 180, ${heartOpacity})`;
+                ctx.font = '18px sans-serif';
+                ctx.fillText('💖', (boyX + girlX) / 2 - 8, heartY);
+
+                frame++;
+                animationFrameId = requestAnimationFrame(draw);
+            }
+
+            if (animationFrameId) cancelAnimationFrame(animationFrameId);
+            draw();
+        }
+
+        /* ----------------------------------------------------
+         * 5. KRISHNA FLUTE SIMULATION (WEB AUDIO API SYNTH)
+         * ---------------------------------------------------- */
+        let audioCtx = null;
+        let isMusicPlaying = false;
+        let sequenceInterval = null;
+
+        // Krishna Flute Melodic Pitch Sequence (Hz frequencies matching serene Indian flute notes)
+        const fluteNotes = [
+            293.66, 329.63, 369.99, 392.00, 440.00, 493.88, 554.37, 587.33,
+            554.37, 493.88, 440.00, 392.00, 369.99, 329.63, 293.66
+        ];
+
+        function playFluteNote(freq, duration = 1.2) {
+            if (!audioCtx) return;
+
+            try {
+                const osc = audioCtx.createOscillator();
+                const gain = audioCtx.createGain();
+
+                // Flute tone uses sine wave with slight vibrato
+                osc.type = 'sine';
+                osc.frequency.setValueAtTime(freq, audioCtx.currentTime);
+
+                // Smooth attack and release for soothing breathy flute feel
+                gain.gain.setValueAtTime(0, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.18, audioCtx.currentTime + 0.3);
+                gain.gain.exponentialRampToValueAtTime(0.001, audioCtx.currentTime + duration);
+
+                osc.connect(gain);
+                gain.connect(audioCtx.destination);
+
+                osc.start();
+                osc.stop(audioCtx.currentTime + duration);
+            } catch (e) {
+                console.log("Audio play error:", e);
+            }
+        }
+
+        function toggleMusic() {
+            const btnText = document.getElementById('musicText');
+            const btnIcon = document.getElementById('musicIcon');
+
+            if (!audioCtx) {
+                const AudioContext = window.AudioContext || window.webkitAudioContext;
+                audioCtx = new AudioContext();
+            }
+
+            if (audioCtx.state === 'suspended') {
+                audioCtx.resume();
+            }
+
+            if (isMusicPlaying) {
+                // Stop music
+                isMusicPlaying = false;
+                clearInterval(sequenceInterval);
+                btnText.innerText = "Flute Audio: OFF";
+                btnIcon.classList.remove('text-yellow-300');
+                btnIcon.classList.add('text-gray-400');
+            } else {
+                // Start Krishna Flute melody loop
+                isMusicPlaying = true;
+                btnText.innerText = "Flute Audio: ON 🪈";
+                btnIcon.classList.remove('text-gray-400');
+                btnIcon.classList.add('text-yellow-300');
+
+                let step = 0;
+                sequenceInterval = setInterval(() => {
+                    if (!isMusicPlaying) return;
+                    const note = fluteNotes[step % fluteNotes.length];
+                    playFluteNote(note, 1.4);
+                    step++;
+                }, 800);
+            }
+        }
+
+        // Add event listener to music button
+        document.getElementById('musicToggle').addEventListener('click', toggleMusic);
+
+        // Initialize Floating Hearts on load
+        window.onload = function() {
+            createFloatingHearts();
+        };
+    </script>
+</body>
+</html>
